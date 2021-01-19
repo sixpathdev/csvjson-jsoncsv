@@ -106,7 +106,6 @@ class ConverterController extends Controller
 
         $fcsv = fopen($this->random_strings(4) . '.csv', 'w');
         $array = json_decode($json, true);
-        $csv = '';
 
         $header = false;
         foreach ($array as $line) {
