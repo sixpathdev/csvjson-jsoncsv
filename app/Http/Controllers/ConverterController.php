@@ -78,17 +78,35 @@ class ConverterController extends Controller
 
         // Shufle the $str_result and returns substring 
         // of specified length 
-        return substr(str_shuffle($str_result),0,$length_of_string);
+        return substr(str_shuffle($str_result), 0, $length_of_string);
     }
 
-
-
-    public function jsonToCsv()
+    public function jsonToCsv(Request $request)
     {
-        $json = $this->data;
+        header('Content-type: text/plain; charset=UTF-8');
 
-        $fcsv = fopen($this->random_strings(4).'.csv', 'w');
+        if ($request->hasFile('jsonfile')) {
+            $json = $request->file('jsonfile');
+            $extension = $json->extension();
+            $json = file_get_contents($json);
+            if (!in_array(strtolower($extension), ['json'])) {
+                return response()->json([
+                    'error' => 'Invalid file uploaded. Only json file is allowed'
+                ], 400);
+            }
+        } else {
+            $json = '
+            [
+                { "name": "MG", "class": "SS1", "school": "GSS ENEKA" },
+                { "name": "MGI", "class": "SS2", "school": "PRIME GATE" },
+                { "name": "Mimi", "class": " JSS2", "school": " PH POLY" }
+            ]';
+        }
+
+
+        $fcsv = fopen($this->random_strings(4) . '.csv', 'w');
         $array = json_decode($json, true);
+        $csv = '';
 
         $header = false;
         foreach ($array as $line) {
@@ -101,6 +119,7 @@ class ConverterController extends Controller
             $line_array = array();
 
             foreach ($line as $value) {
+                print_r($value);
                 array_push($line_array, $value);
             }
             fputcsv($fcsv, $line_array);
@@ -108,6 +127,7 @@ class ConverterController extends Controller
 
         //close CSV file after write
         fclose($fcsv);
+        echo "<br /><br />";
         echo "Success";
     }
 }
