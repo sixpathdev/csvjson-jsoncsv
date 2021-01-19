@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::view('/', 'welcome');
+Route::view('/convertjson', 'json');
+
 Route::post('/csvjson', [ConverterController::class, 'csvToJson']);
-Route::get('/jsoncsv', [ConverterController::class, 'jsonToCsv']);
+Route::post('/jsoncsv', [ConverterController::class, 'jsonToCsv']);
 

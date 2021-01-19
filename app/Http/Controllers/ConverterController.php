@@ -105,6 +105,7 @@ class ConverterController extends Controller
 
 
         $fcsv = fopen($this->random_strings(4) . '.csv', 'w');
+        $filelink = $fcsv;
         $array = json_decode($json, true);
 
         $header = false;
@@ -118,7 +119,7 @@ class ConverterController extends Controller
             $line_array = array();
 
             foreach ($line as $value) {
-                print_r($value);
+                // print_r($value);
                 array_push($line_array, $value);
             }
             fputcsv($fcsv, $line_array);
@@ -127,6 +128,6 @@ class ConverterController extends Controller
         //close CSV file after write
         fclose($fcsv);
         echo "<br /><br />";
-        echo "Success";
+        echo "Successfully converted to a csv file";
     }
 }
