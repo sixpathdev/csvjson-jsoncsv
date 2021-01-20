@@ -10,14 +10,9 @@ class ConverterController extends Controller
 
     public function csvToJson(Request $request)
     {
-        // dd($request);
-        // dd($request->hasFile('csvfile'));
-        // dd($request->file('csvfile')->extension());
-
         if (!$request->hasFile('csvfile')) {
-            // dd('hello');
             return response()->json([
-                'error' => 'No file uploaded'
+                'error' => 'No file selected'
             ], 400);
         }
 
@@ -28,10 +23,10 @@ class ConverterController extends Controller
             ], 400);
         }
 
+        //Column names to look out for
         $validateColumnNames = ['name', 'class', 'school'];
 
         $file = $request->file('csvfile');
-        // if (in_array($extension, ['csv','txt','xls'])) {
         $column_names = array();
         $final_data = array();
         $errors = array();
@@ -42,7 +37,7 @@ class ConverterController extends Controller
         //Extract the column names for each row
         $labels = array_shift($data_array);
         foreach ($labels as $label) {
-            $column_names[] = strtolower($label);
+            $column_names[] = trim(strtolower($label));
         }
 
         //Check if the needed column names are available
@@ -57,7 +52,6 @@ class ConverterController extends Controller
             return response()->json([
                 'error' => $errors
             ], 400);
-            // dd($errors);
         }
 
         //Extract data from the csv then combine with the column names as keys for each object returned
@@ -103,9 +97,7 @@ class ConverterController extends Controller
             ]';
         }
 
-
         $fcsv = fopen($this->random_strings(4) . '.csv', 'w');
-        $filelink = $fcsv;
         $array = json_decode($json, true);
 
         $header = false;
@@ -119,7 +111,6 @@ class ConverterController extends Controller
             $line_array = array();
 
             foreach ($line as $value) {
-                // print_r($value);
                 array_push($line_array, $value);
             }
             fputcsv($fcsv, $line_array);
